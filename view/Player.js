@@ -1,14 +1,31 @@
+class InputQueue {
+    constructor() {
+        this.maxLength = 20;
+        this.inputs = []
+    }
+    add(key) {
+        this.inputs[this.inputs.length % this.maxLength] = key;
+    }
+    pop() {
+        if (this.inputs.length === 0) return null;
+        return this.inputs.shift();
+    }
+}
+
 export default class Player {
     constructor(offsetX, offsetY) {
         this.offset = {
             x: offsetX,
             y: offsetY
-        }
+        };
+        this.inputQueue = new InputQueue()
         this.width = offsetX / 10;
         this.height = offsetY / 10;
         this.box = new PIXI.Graphics();
         this.init();
-        document.addEventListener('keydown', key => { this.kewDown(key)});
+        document.addEventListener('keydown', key => {
+            this.inputQueue.add(key);
+        })
     }
     init() {
         this.box.beginFill(0x3498db); // Blue color
@@ -16,8 +33,14 @@ export default class Player {
         this.box.endFill();
     }
 
-    kewDown(key) {
+    update() {
+        const key = this.inputQueue.pop()
+        if (key) {
+            this.kewDown(key);
+        }
+    }
 
+    kewDown(key) {
         if (key.keyCode === 87 || key.keyCode === 38) {
             if (this.box.position.y != 0) {
                 this.box.position.y -= this.height;

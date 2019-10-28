@@ -11,5 +11,8 @@ stage.addChild(player.box);
 const render = () => {
     renderer.render(stage)
 }
-const loop = new GameLoop(render);
+const updater = frame => {
+    player.update(frame)
+}
+const loop = new GameLoop({renderer:render, updater});
 loop.start()

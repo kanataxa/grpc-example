@@ -1,12 +1,15 @@
 export default class GameLoop {
-    constructor(renderer) {
+    constructor({
+        renderer,
+        updater,
+    }) {
         this.duration = 0;
         this.rate = 60.0;
         this.tickInterval = 1000 / this.rate; // 0.016666s = 16.66666ms
 
         this.lastTick = 0;
         this.renderer = renderer;
-        console.log(this)
+        this.updater = updater;
 
     }
 
@@ -22,10 +25,10 @@ export default class GameLoop {
             return;
         }
         while (this.duration > this.tickInterval) {
-            // game state update()
+            this.updater();
             this.duration -= this.tickInterval
         }
-        this.renderer()
+        this.renderer();
         requestAnimationFrame(() => {this.start()});
     }
 
