@@ -1,3 +1,5 @@
+import Backend from "./Backend.js";
+
 class InputQueue {
     constructor() {
         this.maxLength = 20;
@@ -12,18 +14,32 @@ class InputQueue {
     }
 }
 
+const recoverFrame = {
+    37: 5,
+    38: 2,
+    39: 10,
+    40: 2,
+    65: 2,
+    68: 7,
+    83: 5,
+    87: 1,
+};
+
 export default class Player {
     constructor(offsetX, offsetY) {
         this.offset = {
             x: offsetX,
             y: offsetY
         };
-        this.inputQueue = new InputQueue()
+        this.rigidTick = 0;
+        this.inputQueue = new InputQueue();
+        this.backend = new Backend();
         this.width = offsetX / 10;
         this.height = offsetY / 10;
         this.box = new PIXI.Graphics();
         this.init();
         document.addEventListener('keydown', key => {
+            this.backend.add(key);
             this.inputQueue.add(key);
         })
     }
@@ -35,8 +51,10 @@ export default class Player {
 
     update() {
         const key = this.inputQueue.pop()
-        if (key) {
+        if (key && this.rigidTick === 0) {
             this.kewDown(key);
+        } else if (this.rigidTick > 0) {
+            this.rigidTick -= 1;
         }
     }
 
@@ -64,5 +82,6 @@ export default class Player {
                 this.box.position.x += this.width;
             }
         }
+        this.rigidTick += recoverFrame[key.keyCode]
     }
 }
