@@ -25,7 +25,7 @@ export default class GameLoop {
             return;
         }
         while (this.duration > this.tickInterval) {
-            this.updater();
+            this.updater(/* TODO: delta time // this.tickInterval */ );
             this.duration -= this.tickInterval
         }
         this.renderer();
